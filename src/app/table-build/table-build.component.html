@@ -1,0 +1,34 @@
+<div *ngFor="let elements of data" class='table-container'>
+	<div class="table-wrapper">
+		<div class="table-header"><p>{{elements._source.domain_name}}</p></div>
+		<table>
+
+			<ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: elements._source }"></ng-container>
+		</table>
+	</div>
+	<div class="table-wrapper">
+		<div class="table-header"><p>{{elements.inner_hits.ip.hits.hits[0]['_source']['ip']}}</p></div>
+		<table >
+			<ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: elements.inner_hits.ip.hits.hits[0]['_source'] }"></ng-container>
+		</table>
+	</div>
+	
+
+	
+</div>
+
+<ng-template #recursiveList let-someDta>
+    <tr *ngFor="let item of someDta | keyvalue">
+    	<td *ngIf="chekIsNumber(item.key)" class="field-name">{{item.key}}</td>
+
+      	<td *ngIf="isObject(item.value); then thenBlock else elseBlock"></td>
+
+            <ng-template #thenBlock>
+			<ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: item.value }">						
+			</ng-container>
+		</ng-template>  
+            <ng-template #elseBlock><td>{{item.value}}</td></ng-template>
+    </tr>
+</ng-template>
+
+
